@@ -1,0 +1,527 @@
+:root {
+  --bg-base: #0b0d17;
+  --surface-dark: rgba(11, 13, 23, 0.72);
+  --surface-hover: rgba(18, 22, 40, 0.84);
+  --surface-menu: rgba(13, 16, 30, 0.94);
+
+  --accent-color: #7c74ff;
+  --accent-rgb: 124, 116, 255;
+  --engine-color: #6ea8ff;
+
+  --text-primary: #eef1ff;
+  --text-secondary: rgba(214, 220, 255, 0.66);
+  --text-muted: rgba(214, 220, 255, 0.44);
+
+  --border-subtle: rgba(var(--accent-rgb), 0.22);
+  --border-active: rgba(var(--accent-rgb), 0.62);
+  --glow-soft: 0 0 22px rgba(var(--accent-rgb), 0.24);
+  --glow-focus: 0 0 0 1px rgba(var(--accent-rgb), 0.45), 0 0 28px rgba(var(--accent-rgb), 0.28);
+
+  --top-bar-height: 44px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: "Inter", "Segoe UI Variable", "Segoe UI", system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+/* ==========================================================================
+   Wallpaper Background Layer (Zero backdrop-filter, GPU-friendly fade)
+   ========================================================================== */
+.wallpaper-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 25%, rgba(62, 58, 140, 0.28), transparent 70%),
+    radial-gradient(ellipse 70% 50% at 80% 80%, rgba(124, 77, 255, 0.16), transparent 65%),
+    linear-gradient(160deg, #0b0d17 0%, #11152b 52%, #181330 100%);
+  pointer-events: none;
+}
+
+.bg-media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.38s var(--ease-smooth);
+  pointer-events: none;
+  will-change: opacity;
+}
+
+.bg-media.is-visible {
+  opacity: 1;
+}
+
+.bg-fallback {
+  z-index: 1;
+}
+
+.bg-image {
+  z-index: 2;
+}
+
+.bg-video {
+  z-index: 3;
+}
+
+.bg-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background:
+    linear-gradient(180deg, rgba(11, 13, 23, 0.56) 0%, rgba(11, 13, 23, 0.12) 18%, rgba(11, 13, 23, 0.18) 72%, rgba(11, 13, 23, 0.58) 100%),
+    radial-gradient(circle at 50% 48%, rgba(11, 13, 23, 0.28) 0%, rgba(11, 13, 23, 0.08) 45%, rgba(11, 13, 23, 0.45) 100%);
+}
+
+/* ==========================================================================
+   Top Bookmarks Bar
+   ========================================================================== */
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  height: var(--top-bar-height);
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  background-color: rgba(11, 13, 23, 0.68);
+  border-bottom: 1px solid rgba(var(--accent-rgb), 0.16);
+}
+
+.bookmarks-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.bookmarks-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.bookmark-item {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 28px;
+  max-width: 176px;
+  padding: 0 10px;
+  border-radius: var(--radius-sm);
+  background-color: var(--surface-dark);
+  border: 1px solid rgba(var(--accent-rgb), 0.16);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    color 0.16s ease,
+    background-color 0.16s ease,
+    border-color 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+.bookmark-item:hover,
+.bookmark-item:focus-visible,
+.bookmark-item[aria-expanded="true"] {
+  outline: none;
+  color: var(--text-primary);
+  background-color: var(--surface-hover);
+  border-color: var(--border-active);
+  box-shadow: 0 0 14px rgba(var(--accent-rgb), 0.22);
+}
+
+.bookmark-icon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  border-radius: 3px;
+  object-fit: contain;
+}
+
+.bookmark-fallback-svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  color: var(--accent-color);
+  opacity: 0.9;
+}
+
+.bookmark-chevron {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  color: var(--text-muted);
+  transition: transform 0.16s var(--ease-smooth), color 0.16s ease;
+}
+
+.bookmark-item[aria-expanded="true"] .bookmark-chevron {
+  transform: rotate(180deg);
+  color: var(--accent-color);
+}
+
+.bookmark-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bookmarks-empty {
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 0 6px;
+}
+
+/* ==========================================================================
+   Folder Dropdown Layer (Portal outside bar to avoid overflow clipping)
+   ========================================================================== */
+.dropdown-layer {
+  position: fixed;
+  z-index: 50;
+  min-width: 220px;
+  max-width: 300px;
+  max-height: min(68vh, 460px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 6px;
+  border-radius: var(--radius-md);
+  background-color: var(--surface-menu);
+  border: 1px solid var(--border-active);
+  box-shadow:
+    0 14px 38px rgba(4, 6, 14, 0.72),
+    0 0 24px rgba(var(--accent-rgb), 0.2);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(var(--accent-rgb), 0.35) transparent;
+}
+
+.dropdown-layer[hidden] {
+  display: none;
+}
+
+.dropdown-entry {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 450;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    color 0.14s ease,
+    background-color 0.14s ease,
+    border-color 0.14s ease;
+}
+
+.dropdown-entry:hover,
+.dropdown-entry:focus-visible {
+  outline: none;
+  color: var(--text-primary);
+  background-color: rgba(var(--accent-rgb), 0.14);
+  border-color: rgba(var(--accent-rgb), 0.34);
+}
+
+.dropdown-entry-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dropdown-subfolder-children {
+  margin: 2px 0 4px 12px;
+  padding-left: 8px;
+  border-left: 1px solid rgba(var(--accent-rgb), 0.24);
+}
+
+.dropdown-subfolder-children[hidden] {
+  display: none;
+}
+
+.dropdown-folder-toggle[aria-expanded="true"] .bookmark-chevron {
+  transform: rotate(180deg);
+  color: var(--accent-color);
+}
+
+.dropdown-empty {
+  padding: 10px 12px;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ==========================================================================
+   Center Stage: Clock & Search
+   ========================================================================== */
+.center-stage {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  padding: calc(var(--top-bar-height) + 20px) 20px 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-stack {
+  width: min(640px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  transform: translateY(-2.5vh);
+}
+
+.clock-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.clock-time {
+  display: block;
+  font-size: clamp(3.5rem, 8vw, 5.5rem);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+  text-shadow:
+    0 4px 28px rgba(6, 8, 18, 0.85),
+    0 0 36px rgba(var(--accent-rgb), 0.24);
+}
+
+.clock-date {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  text-shadow: 0 2px 12px rgba(6, 8, 18, 0.85);
+}
+
+/* ==========================================================================
+   Search Bar (rgba(11, 13, 23, 0.72) + Blue-Violet Accent Glow, NO blur)
+   ========================================================================== */
+.search-box {
+  width: 100%;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px 0 10px;
+  border-radius: var(--radius-lg);
+  background-color: var(--surface-dark);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 12px 32px rgba(5, 7, 15, 0.45);
+  transition:
+    border-color 0.2s var(--ease-smooth),
+    box-shadow 0.2s var(--ease-smooth),
+    background-color 0.2s var(--ease-smooth);
+}
+
+.search-box:hover {
+  border-color: rgba(var(--accent-rgb), 0.42);
+  box-shadow: 0 12px 32px rgba(5, 7, 15, 0.5), var(--glow-soft);
+}
+
+.search-box:focus-within {
+  background-color: rgba(11, 13, 23, 0.84);
+  border-color: var(--border-active);
+  box-shadow: 0 16px 40px rgba(5, 7, 15, 0.6), var(--glow-focus);
+}
+
+.engine-badge {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 34px;
+  padding: 0 11px;
+  border-radius: 10px;
+  border: 1px solid rgba(var(--accent-rgb), 0.28);
+  background-color: rgba(20, 24, 44, 0.88);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition:
+    border-color 0.16s ease,
+    background-color 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+.engine-badge:hover,
+.engine-badge:focus-visible {
+  outline: none;
+  border-color: var(--engine-color);
+  background-color: rgba(28, 33, 60, 0.94);
+  box-shadow: 0 0 12px rgba(var(--accent-rgb), 0.24);
+}
+
+.engine-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--engine-color);
+  box-shadow: 0 0 8px var(--engine-color);
+}
+
+.search-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text-primary);
+  caret-color: var(--accent-color);
+  font-family: inherit;
+  font-size: 15.5px;
+  font-weight: 400;
+  user-select: text;
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.tab-hint {
+  flex: 0 0 auto;
+  padding: 3px 7px;
+  border-radius: 6px;
+  border: 1px solid rgba(var(--accent-rgb), 0.24);
+  background-color: rgba(18, 22, 40, 0.72);
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  transition: color 0.16s ease, border-color 0.16s ease;
+}
+
+.search-box:focus-within .tab-hint {
+  color: var(--text-secondary);
+  border-color: rgba(var(--accent-rgb), 0.42);
+}
+
+/* ==========================================================================
+   Subtle Wallpaper Engine Status Indicator
+   ========================================================================== */
+.we-status {
+  position: fixed;
+  right: 14px;
+  bottom: 12px;
+  z-index: 15;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(var(--accent-rgb), 0.16);
+  background-color: rgba(11, 13, 23, 0.62);
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  opacity: 0.72;
+  transition:
+    opacity 0.16s ease,
+    color 0.16s ease,
+    border-color 0.16s ease;
+}
+
+.we-status:hover,
+.we-status:focus-visible {
+  outline: none;
+  opacity: 1;
+  color: var(--text-primary);
+  border-color: var(--border-active);
+}
+
+.we-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: rgba(214, 220, 255, 0.4);
+}
+
+.we-status[data-state="live"] .we-status-dot {
+  background-color: #5ef2b8;
+  box-shadow: 0 0 8px rgba(94, 242, 184, 0.65);
+}
+
+.we-status[data-state="paused"] .we-status-dot {
+  background-color: var(--accent-color);
+}
+
+.we-status[data-state="connecting"] .we-status-dot {
+  background-color: #ffd166;
+}
+
+.we-status[data-state="fallback"] .we-status-dot {
+  background-color: rgba(180, 188, 235, 0.48);
+}
+
+/* ==========================================================================
+   Reduced Motion Accessibility
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .bg-media,
+  .bookmark-item,
+  .dropdown-entry,
+  .search-box,
+  .engine-badge,
+  .we-status {
+    transition: none;
+  }
+}

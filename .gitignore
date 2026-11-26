@@ -1,0 +1,23 @@
+# Heavy media assets (keep repository lightweight)
+assets/*.mp4
+assets/*.webm
+assets/*.mov
+assets/bg.*
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Local build / test artifacts
+*.zip
+*.crx
+*.pem
+*.log
+node_modules/
+__pycache__/
+scratch/

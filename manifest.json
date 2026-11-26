@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Anime WE New Tab",
+  "version": "1.0.0",
+  "description": "Minimalist Dark Anime New Tab synchronized with Wallpaper Engine, featuring a custom Bookmarks Bar and keyboard-first Search.",
+  "icons": {
+    "16": "assets/icon16.png",
+    "48": "assets/icon48.png",
+    "128": "assets/icon128.png"
+  },
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "permissions": [
+    "bookmarks",
+    "favicon"
+  ],
+  "host_permissions": [
+    "http://127.0.0.1/*",
+    "http://localhost/*"
+  ]
+}

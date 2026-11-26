@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Tab</title>
+  <style>html, body { background-color: #0b0d17; margin: 0; }</style>
+  <link rel="stylesheet" href="css/main.css">
+  <script defer src="js/config.js"></script>
+  <script defer src="js/clock.js"></script>
+  <script defer src="js/search.js"></script>
+  <script defer src="js/bookmarks.js"></script>
+  <script defer src="js/wallpaper.js"></script>
+  <script defer src="js/main.js"></script>
+</head>
+<body>
+  <!-- Wallpaper Background Layer -->
+  <div id="wallpaper-layer" class="wallpaper-layer" aria-hidden="true">
+    <img
+      id="bg-fallback"
+      class="bg-media bg-fallback is-visible"
+      src="assets/fallback.jpg"
+      alt=""
+      decoding="async"
+    >
+    <img
+      id="bg-image"
+      class="bg-media bg-image"
+      alt=""
+      decoding="async"
+    >
+    <video
+      id="bg-video"
+      class="bg-media bg-video"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="metadata"
+    ></video>
+    <div class="bg-vignette"></div>
+  </div>
+
+  <!-- Top Bookmarks Bar -->
+  <header class="top-bar" id="top-bar">
+    <nav
+      id="bookmarks-bar"
+      class="bookmarks-bar"
+      aria-label="Bookmarks Bar"
+    ></nav>
+  </header>
+
+  <!-- Portal layer for folder dropdowns so horizontal overflow never clips menus -->
+  <div
+    id="bookmark-dropdown-layer"
+    class="dropdown-layer"
+    role="menu"
+    aria-label="Bookmark Folder Menu"
+    hidden
+  ></div>
+
+  <!-- Center Stage: Clock & Search -->
+  <main class="center-stage">
+    <section class="hero-stack" aria-label="Dashboard">
+      <div class="clock-block" aria-live="off">
+        <time id="clock-time" class="clock-time">00:00</time>
+        <div id="clock-date" class="clock-date"></div>
+      </div>
+
+      <form id="search-form" class="search-box" role="search" novalidate>
+        <button
+          id="engine-badge"
+          class="engine-badge"
+          type="button"
+          title="Switch search engine (Tab)"
+          aria-label="Current search engine: Google. Click or press Tab to switch."
+        >
+          <span class="engine-dot" aria-hidden="true"></span>
+          <span id="engine-label" class="engine-label">Google</span>
+        </button>
+
+        <input
+          id="search-input"
+          class="search-input"
+          type="text"
+          autocomplete="off"
+          autocapitalize="off"
+          spellcheck="false"
+          enterkeyhint="search"
+          autofocus
+          placeholder="Search Google..."
+          aria-label="Search query"
+        >
+
+        <kbd class="tab-hint" aria-hidden="true">Tab</kbd>
+      </form>
+    </section>
+  </main>
+
+  <!-- Subtle Wallpaper Engine Sync Indicator -->
+  <button
+    id="we-status"
+    class="we-status"
+    type="button"
+    data-state="fallback"
+    title="Wallpaper Engine status: Fallback mode (click to reconnect)"
+    aria-label="Wallpaper Engine connection status"
+  >
+    <span class="we-status-dot" aria-hidden="true"></span>
+    <span id="we-status-text" class="we-status-text">Fallback</span>
+  </button>
+</body>
+</html>
